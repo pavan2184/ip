@@ -34,6 +34,17 @@ public class Pavanmaxxer {
                     tasks[taskIndex].markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks[taskIndex]);
+                } else if (input.equals("delete") || input.startsWith("delete ")) {
+                    int taskIndex = parseTaskIndex(input, "delete", taskCount);
+                    Task removedTask = tasks[taskIndex];
+                    for (int i = taskIndex; i < taskCount - 1; i++) {
+                        tasks[i] = tasks[i + 1];
+                    }
+                    taskCount--;
+                    tasks[taskCount] = null;
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + removedTask);
+                    System.out.println("Now you have " + taskCount + " tasks in the list.");
                 } else if (isTaskCommand(input)) {
                     Task task = parseTask(input);
                     if (taskCount >= tasks.length) {
