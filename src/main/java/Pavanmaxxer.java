@@ -37,7 +37,7 @@ public class Pavanmaxxer {
                 } else if (isTaskCommand(input)) {
                     Task task = parseTask(input);
                     if (taskCount >= tasks.length) {
-                        throw new IllegalArgumentException("The task list is full.");
+                        throw new PavanmaxxerException("The task list is full.");
                     }
                     tasks[taskCount] = task;
                     System.out.println("Got it. I've added this task:");
@@ -45,9 +45,9 @@ public class Pavanmaxxer {
                     taskCount++;
                     System.out.println("Now you have " + taskCount + " tasks in the list.");
                 } else {
-                    throw new IllegalArgumentException("I'm sorry, but I don't know what that means :-(");
+                    throw new PavanmaxxerException("I'm sorry, but I don't know what that means :-(");
                 }
-            } catch (IllegalArgumentException exception) {
+            } catch (PavanmaxxerException exception) {
                 System.out.println("OOPS!!! " + exception.getMessage());
             }
         }
@@ -67,11 +67,11 @@ public class Pavanmaxxer {
     /**
      * Parses a validly named task command and validates all required fields.
      */
-    private static Task parseTask(String input) {
+    private static Task parseTask(String input) throws PavanmaxxerException {
         if (input.equals("todo") || input.startsWith("todo ")) {
             String description = input.length() == 4 ? "" : input.substring(5).trim();
             if (description.isEmpty()) {
-                throw new IllegalArgumentException("The description of a todo cannot be empty.");
+                throw new PavanmaxxerException("The description of a todo cannot be empty.");
             }
             return new Todo(description);
         }
@@ -80,18 +80,18 @@ public class Pavanmaxxer {
             String arguments = input.length() == 8 ? "" : input.substring(9).trim();
             int byIndex = arguments.indexOf("/by");
             if (arguments.isEmpty() || byIndex == 0) {
-                throw new IllegalArgumentException("The description of a deadline cannot be empty.");
+                throw new PavanmaxxerException("The description of a deadline cannot be empty.");
             }
             if (byIndex < 0) {
-                throw new IllegalArgumentException("A deadline needs a /by time.");
+                throw new PavanmaxxerException("A deadline needs a /by time.");
             }
             String description = arguments.substring(0, byIndex).trim();
             String by = arguments.substring(byIndex + 3).trim();
             if (description.isEmpty()) {
-                throw new IllegalArgumentException("The description of a deadline cannot be empty.");
+                throw new PavanmaxxerException("The description of a deadline cannot be empty.");
             }
             if (by.isEmpty()) {
-                throw new IllegalArgumentException("A deadline needs a /by time.");
+                throw new PavanmaxxerException("A deadline needs a /by time.");
             }
             return new Deadline(description, by);
         }
@@ -99,27 +99,27 @@ public class Pavanmaxxer {
         String arguments = input.length() == 5 ? "" : input.substring(6).trim();
         int fromIndex = arguments.indexOf("/from");
         if (arguments.isEmpty() || fromIndex == 0) {
-            throw new IllegalArgumentException("The description of an event cannot be empty.");
+            throw new PavanmaxxerException("The description of an event cannot be empty.");
         }
         if (fromIndex < 0) {
-            throw new IllegalArgumentException("An event needs a /from time.");
+            throw new PavanmaxxerException("An event needs a /from time.");
         }
         String description = arguments.substring(0, fromIndex).trim();
         String fromAndTo = arguments.substring(fromIndex + 5).trim();
         int toIndex = fromAndTo.indexOf("/to");
         if (description.isEmpty()) {
-            throw new IllegalArgumentException("The description of an event cannot be empty.");
+            throw new PavanmaxxerException("The description of an event cannot be empty.");
         }
         if (toIndex < 0) {
-            throw new IllegalArgumentException("An event needs a /to time.");
+            throw new PavanmaxxerException("An event needs a /to time.");
         }
         String from = fromAndTo.substring(0, toIndex).trim();
         String to = fromAndTo.substring(toIndex + 3).trim();
         if (from.isEmpty()) {
-            throw new IllegalArgumentException("An event needs a /from time.");
+            throw new PavanmaxxerException("An event needs a /from time.");
         }
         if (to.isEmpty()) {
-            throw new IllegalArgumentException("An event needs a /to time.");
+            throw new PavanmaxxerException("An event needs a /to time.");
         }
         return new Event(description, from, to);
     }
@@ -127,21 +127,22 @@ public class Pavanmaxxer {
     /**
      * Extracts and validates a one-based task number, returning its array index.
      */
-    private static int parseTaskIndex(String input, String command, int taskCount) {
+    private static int parseTaskIndex(String input, String command, int taskCount)
+            throws PavanmaxxerException {
         String taskNumberText = input.substring(command.length()).trim();
         if (taskNumberText.isEmpty()) {
-            throw new IllegalArgumentException("Please provide a task number to " + command + ".");
+            throw new PavanmaxxerException("Please provide a task number to " + command + ".");
         }
 
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(taskNumberText);
         } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("The task number must be an integer.");
+            throw new PavanmaxxerException("The task number must be an integer.");
         }
 
         if (taskNumber < 1 || taskNumber > taskCount) {
-            throw new IllegalArgumentException("That task number does not exist.");
+            throw new PavanmaxxerException("That task number does not exist.");
         }
         return taskNumber - 1;
     }
