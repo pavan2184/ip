@@ -19,54 +19,130 @@ public class Pavanmaxxer {
                 break;
             }
 
-            if (input.equals("list")) {
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + "." + tasks[i]);
+            try {
+                if (input.equals("list")) {
+                    for (int i = 0; i < taskCount; i++) {
+                        System.out.println((i + 1) + "." + tasks[i]);
+                    }
+                } else if (input.equals("mark") || input.startsWith("mark ")) {
+                    int taskIndex = parseTaskIndex(input, "mark", taskCount);
+                    tasks[taskIndex].markAsDone();
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasks[taskIndex]);
+                } else if (input.equals("unmark") || input.startsWith("unmark ")) {
+                    int taskIndex = parseTaskIndex(input, "unmark", taskCount);
+                    tasks[taskIndex].markAsNotDone();
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasks[taskIndex]);
+                } else if (isTaskCommand(input)) {
+                    Task task = parseTask(input);
+                    if (taskCount >= tasks.length) {
+                        throw new IllegalArgumentException("The task list is full.");
+                    }
+                    tasks[taskCount] = task;
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + tasks[taskCount]);
+                    taskCount++;
+                    System.out.println("Now you have " + taskCount + " tasks in the list.");
+                } else {
+                    throw new IllegalArgumentException("I'm sorry, but I don't know what that means :-(");
                 }
-            } else if (input.startsWith("mark ")) {
-                int taskIndex = Integer.parseInt(input.substring(5)) - 1;
-                tasks[taskIndex].markAsDone();
-                System.out.println("Nice! I've marked this task as done:");
-                System.out.println("  " + tasks[taskIndex]);
-            } else if (input.startsWith("unmark ")) {
-                int taskIndex = Integer.parseInt(input.substring(7)) - 1;
-                tasks[taskIndex].markAsNotDone();
-                System.out.println("OK, I've marked this task as not done yet:");
-                System.out.println("  " + tasks[taskIndex]);
-            } else if (input.startsWith("todo ")) {
-                String description = input.substring(5);
-                tasks[taskCount] = new Todo(description);
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount]);
-                taskCount++;
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-            } else if (input.startsWith("deadline ")) {
-                String[] deadlineParts = input.substring(9).split(" /by ", 2);
-                String description = deadlineParts[0];
-                String by = deadlineParts[1];
-                tasks[taskCount] = new Deadline(description, by);
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount]);
-                taskCount++;
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-            } else if (input.startsWith("event ")) {
-                String[] eventParts = input.substring(6).split(" /from ", 2);
-                String description = eventParts[0];
-                String[] timeParts = eventParts[1].split(" /to ", 2);
-                String from = timeParts[0];
-                String to = timeParts[1];
-                tasks[taskCount] = new Event(description, from, to);
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount]);
-                taskCount++;
-                System.out.println("Now you have " + taskCount + " tasks in the list.");
-            } else {
-                tasks[taskCount] = new Task(input);
-                taskCount++;
-                System.out.println("added: " + input);
+            } catch (IllegalArgumentException exception) {
+                System.out.println("OOPS!!! " + exception.getMessage());
             }
         }
 
         System.out.println("Bye. Hope to see you again soon!");
+    }
+
+    /**
+     * Returns whether the input begins a supported task-creation command.
+     */
+    private static boolean isTaskCommand(String input) {
+        return input.equals("todo") || input.startsWith("todo ")
+                || input.equals("deadline") || input.startsWith("deadline ")
+                || input.equals("event") || input.startsWith("event ");
+    }
+
+    /**
+     * Parses a validly named task command and validates all required fields.
+     */
+    private static Task parseTask(String input) {
+        if (input.equals("todo") || input.startsWith("todo ")) {
+            String description = input.length() == 4 ? "" : input.substring(5).trim();
+            if (description.isEmpty()) {
+                throw new IllegalArgumentException("The description of a todo cannot be empty.");
+            }
+            return new Todo(description);
+        }
+
+        if (input.equals("deadline") || input.startsWith("deadline ")) {
+            String arguments = input.length() == 8 ? "" : input.substring(9).trim();
+            int byIndex = arguments.indexOf("/by");
+            if (arguments.isEmpty() || byIndex == 0) {
+                throw new IllegalArgumentException("The description of a deadline cannot be empty.");
+            }
+            if (byIndex < 0) {
+                throw new IllegalArgumentException("A deadline needs a /by time.");
+            }
+            String description = arguments.substring(0, byIndex).trim();
+            String by = arguments.substring(byIndex + 3).trim();
+            if (description.isEmpty()) {
+                throw new IllegalArgumentException("The description of a deadline cannot be empty.");
+            }
+            if (by.isEmpty()) {
+                throw new IllegalArgumentException("A deadline needs a /by time.");
+            }
+            return new Deadline(description, by);
+        }
+
+        String arguments = input.length() == 5 ? "" : input.substring(6).trim();
+        int fromIndex = arguments.indexOf("/from");
+        if (arguments.isEmpty() || fromIndex == 0) {
+            throw new IllegalArgumentException("The description of an event cannot be empty.");
+        }
+        if (fromIndex < 0) {
+            throw new IllegalArgumentException("An event needs a /from time.");
+        }
+        String description = arguments.substring(0, fromIndex).trim();
+        String fromAndTo = arguments.substring(fromIndex + 5).trim();
+        int toIndex = fromAndTo.indexOf("/to");
+        if (description.isEmpty()) {
+            throw new IllegalArgumentException("The description of an event cannot be empty.");
+        }
+        if (toIndex < 0) {
+            throw new IllegalArgumentException("An event needs a /to time.");
+        }
+        String from = fromAndTo.substring(0, toIndex).trim();
+        String to = fromAndTo.substring(toIndex + 3).trim();
+        if (from.isEmpty()) {
+            throw new IllegalArgumentException("An event needs a /from time.");
+        }
+        if (to.isEmpty()) {
+            throw new IllegalArgumentException("An event needs a /to time.");
+        }
+        return new Event(description, from, to);
+    }
+
+    /**
+     * Extracts and validates a one-based task number, returning its array index.
+     */
+    private static int parseTaskIndex(String input, String command, int taskCount) {
+        String taskNumberText = input.substring(command.length()).trim();
+        if (taskNumberText.isEmpty()) {
+            throw new IllegalArgumentException("Please provide a task number to " + command + ".");
+        }
+
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(taskNumberText);
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("The task number must be an integer.");
+        }
+
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            throw new IllegalArgumentException("That task number does not exist.");
+        }
+        return taskNumber - 1;
     }
 }
