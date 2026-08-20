@@ -12,41 +12,49 @@ public class Pavanmaxxer {
         System.out.println("Hello! I'm Pavanmaxxer.");
         System.out.println("What can I do for you?");
 
+        mainLoop:
         while (true) {
             String input = scanner.nextLine();
-
-            if (input.equals("bye")) {
-                break;
-            }
+            Command command = Command.from(input);
 
             try {
-                if (input.equals("list")) {
+                switch (command) {
+                case BYE:
+                    break mainLoop;
+                case LIST:
                     for (int i = 0; i < tasks.size(); i++) {
                         System.out.println((i + 1) + "." + tasks.get(i));
                     }
-                } else if (input.equals("mark") || input.startsWith("mark ")) {
+                    break;
+                case MARK:
                     int taskIndex = parseTaskIndex(input, "mark", tasks.size());
                     tasks.get(taskIndex).markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
-                } else if (input.equals("unmark") || input.startsWith("unmark ")) {
-                    int taskIndex = parseTaskIndex(input, "unmark", tasks.size());
-                    tasks.get(taskIndex).markAsNotDone();
+                    break;
+                case UNMARK:
+                    int unmarkIndex = parseTaskIndex(input, "unmark", tasks.size());
+                    tasks.get(unmarkIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks.get(taskIndex));
-                } else if (input.equals("delete") || input.startsWith("delete ")) {
-                    int taskIndex = parseTaskIndex(input, "delete", tasks.size());
-                    Task removedTask = tasks.remove(taskIndex);
+                    System.out.println("  " + tasks.get(unmarkIndex));
+                    break;
+                case DELETE:
+                    int deleteIndex = parseTaskIndex(input, "delete", tasks.size());
+                    Task removedTask = tasks.remove(deleteIndex);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                } else if (isTaskCommand(input)) {
-                    Task task = parseTask(input);
+                    break;
+                case TODO:
+                case DEADLINE:
+                case EVENT:
+                    Task task = parseTask(input, command);
                     tasks.add(task);
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + task);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                } else {
+                    break;
+                case UNKNOWN:
                     throw new PavanmaxxerException("I'm sorry, but I don't know what that means :-(");
                 }
             } catch (PavanmaxxerException exception) {
@@ -58,19 +66,10 @@ public class Pavanmaxxer {
     }
 
     /**
-     * Returns whether the input begins a supported task-creation command.
-     */
-    private static boolean isTaskCommand(String input) {
-        return input.equals("todo") || input.startsWith("todo ")
-                || input.equals("deadline") || input.startsWith("deadline ")
-                || input.equals("event") || input.startsWith("event ");
-    }
-
-    /**
      * Parses a validly named task command and validates all required fields.
      */
-    private static Task parseTask(String input) throws PavanmaxxerException {
-        if (input.equals("todo") || input.startsWith("todo ")) {
+    private static Task parseTask(String input, Command command) throws PavanmaxxerException {
+        if (command == Command.TODO) {
             String description = input.length() == 4 ? "" : input.substring(5).trim();
             if (description.isEmpty()) {
                 throw new PavanmaxxerException("The description of a todo cannot be empty.");
@@ -78,7 +77,7 @@ public class Pavanmaxxer {
             return new Todo(description);
         }
 
-        if (input.equals("deadline") || input.startsWith("deadline ")) {
+        if (command == Command.DEADLINE) {
             String arguments = input.length() == 8 ? "" : input.substring(9).trim();
             int byIndex = arguments.indexOf("/by");
             if (arguments.isEmpty() || byIndex == 0) {
