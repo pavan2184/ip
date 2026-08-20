@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -6,8 +7,7 @@ import java.util.Scanner;
 public class Pavanmaxxer {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[100];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         System.out.println("Hello! I'm Pavanmaxxer.");
         System.out.println("What can I do for you?");
@@ -21,40 +21,31 @@ public class Pavanmaxxer {
 
             try {
                 if (input.equals("list")) {
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println((i + 1) + "." + tasks[i]);
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + "." + tasks.get(i));
                     }
                 } else if (input.equals("mark") || input.startsWith("mark ")) {
-                    int taskIndex = parseTaskIndex(input, "mark", taskCount);
-                    tasks[taskIndex].markAsDone();
+                    int taskIndex = parseTaskIndex(input, "mark", tasks.size());
+                    tasks.get(taskIndex).markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println("  " + tasks.get(taskIndex));
                 } else if (input.equals("unmark") || input.startsWith("unmark ")) {
-                    int taskIndex = parseTaskIndex(input, "unmark", taskCount);
-                    tasks[taskIndex].markAsNotDone();
+                    int taskIndex = parseTaskIndex(input, "unmark", tasks.size());
+                    tasks.get(taskIndex).markAsNotDone();
                     System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println("  " + tasks.get(taskIndex));
                 } else if (input.equals("delete") || input.startsWith("delete ")) {
-                    int taskIndex = parseTaskIndex(input, "delete", taskCount);
-                    Task removedTask = tasks[taskIndex];
-                    for (int i = taskIndex; i < taskCount - 1; i++) {
-                        tasks[i] = tasks[i + 1];
-                    }
-                    taskCount--;
-                    tasks[taskCount] = null;
+                    int taskIndex = parseTaskIndex(input, "delete", tasks.size());
+                    Task removedTask = tasks.remove(taskIndex);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
-                    System.out.println("Now you have " + taskCount + " tasks in the list.");
+                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
                 } else if (isTaskCommand(input)) {
                     Task task = parseTask(input);
-                    if (taskCount >= tasks.length) {
-                        throw new PavanmaxxerException("The task list is full.");
-                    }
-                    tasks[taskCount] = task;
+                    tasks.add(task);
                     System.out.println("Got it. I've added this task:");
-                    System.out.println("  " + tasks[taskCount]);
-                    taskCount++;
-                    System.out.println("Now you have " + taskCount + " tasks in the list.");
+                    System.out.println("  " + task);
+                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
                 } else {
                     throw new PavanmaxxerException("I'm sorry, but I don't know what that means :-(");
                 }
@@ -136,9 +127,9 @@ public class Pavanmaxxer {
     }
 
     /**
-     * Extracts and validates a one-based task number, returning its array index.
+     * Extracts and validates a one-based task number, returning its list index.
      */
-    private static int parseTaskIndex(String input, String command, int taskCount)
+    private static int parseTaskIndex(String input, String command, int taskListSize)
             throws PavanmaxxerException {
         String taskNumberText = input.substring(command.length()).trim();
         if (taskNumberText.isEmpty()) {
@@ -152,7 +143,7 @@ public class Pavanmaxxer {
             throw new PavanmaxxerException("The task number must be an integer.");
         }
 
-        if (taskNumber < 1 || taskNumber > taskCount) {
+        if (taskNumber < 1 || taskNumber > taskListSize) {
             throw new PavanmaxxerException("That task number does not exist.");
         }
         return taskNumber - 1;
