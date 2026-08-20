@@ -4,8 +4,6 @@
 public class Task {
     protected String description;
     protected boolean isDone;
-    protected String typeIcon;
-    protected String timingDetails;
 
     /**
      * Creates an incomplete task with the given description.
@@ -13,21 +11,8 @@ public class Task {
      * @param description description of the task
      */
     public Task(String description) {
-        this(description, "", "");
-    }
-
-    /**
-     * Creates an incomplete task with its display type and optional timing details.
-     *
-     * @param description description of the task
-     * @param typeIcon single-letter task type shown to the user
-     * @param timingDetails formatted timing text, or an empty string
-     */
-    public Task(String description, String typeIcon, String timingDetails) {
         this.description = description;
         this.isDone = false;
-        this.typeIcon = typeIcon;
-        this.timingDetails = timingDetails;
     }
 
     /**
@@ -51,7 +36,6 @@ public class Task {
 
     @Override
     public String toString() {
-        String typePrefix = typeIcon.isEmpty() ? "" : "[" + typeIcon + "]";
-        return typePrefix + "[" + getStatusIcon() + "] " + description + timingDetails;
+        return "[" + getStatusIcon() + "] " + description;
     }
 }

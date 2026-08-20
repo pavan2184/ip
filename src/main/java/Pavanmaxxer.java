@@ -35,7 +35,7 @@ public class Pavanmaxxer {
                 System.out.println("  " + tasks[taskIndex]);
             } else if (input.startsWith("todo ")) {
                 String description = input.substring(5);
-                tasks[taskCount] = new Task(description, "T", "");
+                tasks[taskCount] = new Todo(description);
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + tasks[taskCount]);
                 taskCount++;
@@ -44,7 +44,7 @@ public class Pavanmaxxer {
                 String[] deadlineParts = input.substring(9).split(" /by ", 2);
                 String description = deadlineParts[0];
                 String by = deadlineParts[1];
-                tasks[taskCount] = new Task(description, "D", " (by: " + by + ")");
+                tasks[taskCount] = new Deadline(description, by);
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + tasks[taskCount]);
                 taskCount++;
@@ -55,7 +55,7 @@ public class Pavanmaxxer {
                 String[] timeParts = eventParts[1].split(" /to ", 2);
                 String from = timeParts[0];
                 String to = timeParts[1];
-                tasks[taskCount] = new Task(description, "E", " (from: " + from + " to: " + to + ")");
+                tasks[taskCount] = new Event(description, from, to);
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + tasks[taskCount]);
                 taskCount++;
