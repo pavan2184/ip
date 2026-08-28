@@ -20,6 +20,8 @@ public enum Command {
     DEADLINE("deadline", true),
     /** Creates an event task. */
     EVENT("event", true),
+    /** Finds tasks whose descriptions match a keyword. */
+    FIND("find", true),
     /** Represents unsupported input. */
     UNKNOWN("", false);
 

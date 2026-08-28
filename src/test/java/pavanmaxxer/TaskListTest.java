@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -45,5 +46,19 @@ public class TaskListTest {
         assertThrows(UnsupportedOperationException.class,
                 () -> tasks.asList().add(new Todo("write book")));
         assertEquals(1, tasks.size());
+    }
+
+    @Test
+    void find_mixedCaseKeyword_returnsMatchesInOriginalOrder() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Read Book"));
+        tasks.add(new Todo("buy milk"));
+        tasks.add(new Deadline(
+                "return book", LocalDate.parse("2026-08-31")));
+
+        assertEquals(List.of("Read Book", "return book"),
+                tasks.find("BOOK").stream()
+                        .map(Task::getDescription)
+                        .toList());
     }
 }

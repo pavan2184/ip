@@ -104,7 +104,7 @@ public class Ui {
      *
      * @param tasks Matching tasks in display order.
      */
-    public void showFoundTasks(List<Task> tasks) {
+    public void showMatchingTasks(List<Task> tasks) {
         System.out.println("Here are the matching tasks in your list:");
         showTasks(tasks);
     }
