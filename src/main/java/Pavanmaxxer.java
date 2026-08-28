@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -162,7 +164,11 @@ public class Pavanmaxxer {
             if (fields.length != 4) {
                 throw new PavanmaxxerException("Saved task data is corrupted.");
             }
-            task = new Deadline(fields[2], fields[3]);
+            try {
+                task = new Deadline(fields[2], LocalDate.parse(fields[3]));
+            } catch (DateTimeParseException exception) {
+                throw new PavanmaxxerException("Saved task data is corrupted.");
+            }
             break;
         case "E":
             if (fields.length != 5) {
@@ -183,7 +189,7 @@ public class Pavanmaxxer {
     /**
      * Parses a validly named task command and validates all required fields.
      */
-    private static Task parseTask(String input, Command command) throws PavanmaxxerException {
+    static Task parseTask(String input, Command command) throws PavanmaxxerException {
         if (command == Command.TODO) {
             String description = input.length() == 4 ? "" : input.substring(5).trim();
             if (description.isEmpty()) {
@@ -209,7 +215,11 @@ public class Pavanmaxxer {
             if (by.isEmpty()) {
                 throw new PavanmaxxerException("A deadline needs a /by time.");
             }
-            return new Deadline(description, by);
+            try {
+                return new Deadline(description, LocalDate.parse(by));
+            } catch (DateTimeParseException exception) {
+                throw new PavanmaxxerException("Use yyyy-MM-dd for deadline dates.");
+            }
         }
 
         String arguments = input.length() == 5 ? "" : input.substring(6).trim();

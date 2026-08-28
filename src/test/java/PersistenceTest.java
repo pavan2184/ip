@@ -1,5 +1,6 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +22,7 @@ public class PersistenceTest {
         Todo todo = new Todo("read book");
         todo.markAsDone();
         tasks.add(todo);
-        tasks.add(new Deadline("return book", "2026-08-31"));
+        tasks.add(new Deadline("return book", LocalDate.parse("2026-08-31")));
         tasks.add(new Event("project meeting", "2pm", "4pm"));
 
         Pavanmaxxer.saveTasks(tasks, dataFile);
@@ -31,7 +32,7 @@ public class PersistenceTest {
         assert loaded.size() == 3;
         assert loaded.get(0).toString().equals("[T][X] read book");
         assert loaded.get(1).toString()
-                .equals("[D][ ] return book (by: 2026-08-31)");
+                .equals("[D][ ] return book (by: Aug 31 2026)");
         assert loaded.get(2).toString()
                 .equals("[E][ ] project meeting (from: 2pm to: 4pm)");
     }
