@@ -1,0 +1,63 @@
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
+/**
+ * Checks that tasks can be saved and reconstructed across application runs.
+ */
+public class PersistenceTest {
+    public static void main(String[] args) throws Exception {
+        savesAndLoadsAllTaskTypes();
+        loadsFromMissingFile();
+        rejectsCorruptData();
+        System.out.println("PASS: tasks persist across application runs");
+    }
+
+    private static void savesAndLoadsAllTaskTypes() throws Exception {
+        Path testRoot = Files.createTempDirectory("pavanmaxxer-level7-");
+        Path dataFile = testRoot.resolve("data").resolve("pavanmaxxer.txt");
+
+        ArrayList<Task> tasks = new ArrayList<>();
+        Todo todo = new Todo("read book");
+        todo.markAsDone();
+        tasks.add(todo);
+        tasks.add(new Deadline("return book", "2026-08-31"));
+        tasks.add(new Event("project meeting", "2pm", "4pm"));
+
+        Pavanmaxxer.saveTasks(tasks, dataFile);
+        ArrayList<Task> loaded = Pavanmaxxer.loadTasks(dataFile);
+
+        assert Files.exists(dataFile);
+        assert loaded.size() == 3;
+        assert loaded.get(0).toString().equals("[T][X] read book");
+        assert loaded.get(1).toString()
+                .equals("[D][ ] return book (by: 2026-08-31)");
+        assert loaded.get(2).toString()
+                .equals("[E][ ] project meeting (from: 2pm to: 4pm)");
+    }
+
+    private static void loadsFromMissingFile() throws Exception {
+        Path testRoot = Files.createTempDirectory("pavanmaxxer-level7-empty-");
+        Path dataFile = testRoot.resolve("data").resolve("pavanmaxxer.txt");
+
+        ArrayList<Task> loaded = Pavanmaxxer.loadTasks(dataFile);
+
+        assert loaded.isEmpty();
+        assert Files.exists(dataFile);
+    }
+
+    private static void rejectsCorruptData() throws Exception {
+        Path testRoot = Files.createTempDirectory("pavanmaxxer-level7-corrupt-");
+        Path dataFile = testRoot.resolve("pavanmaxxer.txt");
+        Files.writeString(dataFile, "T | 0 | \n");
+
+        boolean didThrow = false;
+        try {
+            Pavanmaxxer.loadTasks(dataFile);
+        } catch (PavanmaxxerException exception) {
+            didThrow = true;
+        }
+
+        assert didThrow;
+    }
+}

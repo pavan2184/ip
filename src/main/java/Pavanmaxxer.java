@@ -1,4 +1,8 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -7,13 +11,21 @@ import java.util.Scanner;
 public class Pavanmaxxer {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
+        Path dataFile = Path.of("data", "pavanmaxxer.txt");
+        ArrayList<Task> tasks;
+
+        try {
+            tasks = loadTasks(dataFile);
+        } catch (PavanmaxxerException exception) {
+            System.out.println("OOPS!!! " + exception.getMessage());
+            tasks = new ArrayList<>();
+        }
 
         System.out.println("Hello! I'm Pavanmaxxer.");
         System.out.println("What can I do for you?");
 
         mainLoop:
-        while (true) {
+        while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
             Command command = Command.from(input);
 
@@ -29,18 +41,21 @@ public class Pavanmaxxer {
                 case MARK:
                     int taskIndex = parseTaskIndex(input, "mark", tasks.size());
                     tasks.get(taskIndex).markAsDone();
+                    saveTasks(tasks, dataFile);
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
                     break;
                 case UNMARK:
                     int unmarkIndex = parseTaskIndex(input, "unmark", tasks.size());
                     tasks.get(unmarkIndex).markAsNotDone();
+                    saveTasks(tasks, dataFile);
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(unmarkIndex));
                     break;
                 case DELETE:
                     int deleteIndex = parseTaskIndex(input, "delete", tasks.size());
                     Task removedTask = tasks.remove(deleteIndex);
+                    saveTasks(tasks, dataFile);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -50,6 +65,7 @@ public class Pavanmaxxer {
                 case EVENT:
                     Task task = parseTask(input, command);
                     tasks.add(task);
+                    saveTasks(tasks, dataFile);
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + task);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -63,6 +79,105 @@ public class Pavanmaxxer {
         }
 
         System.out.println("Bye. Hope to see you again soon!");
+    }
+
+    static ArrayList<Task> loadTasks(Path dataFile) throws PavanmaxxerException {
+        try {
+            Path parent = dataFile.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            if (Files.notExists(dataFile)) {
+                Files.createFile(dataFile);
+                return new ArrayList<>();
+            }
+
+            ArrayList<Task> tasks = new ArrayList<>();
+            for (String line : Files.readAllLines(dataFile)) {
+                if (!line.isBlank()) {
+                    tasks.add(decodeTask(line));
+                }
+            }
+            return tasks;
+        } catch (IOException exception) {
+            throw new PavanmaxxerException("Unable to load saved tasks.");
+        }
+    }
+
+    static void saveTasks(List<Task> tasks, Path dataFile) throws PavanmaxxerException {
+        try {
+            Path parent = dataFile.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            ArrayList<String> lines = new ArrayList<>();
+            for (Task task : tasks) {
+                lines.add(encodeTask(task));
+            }
+            Files.write(dataFile, lines);
+        } catch (IOException exception) {
+            throw new PavanmaxxerException("Unable to save tasks.");
+        }
+    }
+
+    private static String encodeTask(Task task) {
+        String state = task.isDone() ? "1" : "0";
+        if (task instanceof Deadline) {
+            Deadline deadline = (Deadline) task;
+            return "D | " + state + " | " + deadline.getDescription()
+                    + " | " + deadline.getBy();
+        }
+        if (task instanceof Event) {
+            Event event = (Event) task;
+            return "E | " + state + " | " + event.getDescription()
+                    + " | " + event.getFrom() + " | " + event.getTo();
+        }
+        return "T | " + state + " | " + task.getDescription();
+    }
+
+    private static Task decodeTask(String line) throws PavanmaxxerException {
+        String[] fields = line.split(" \\| ", -1);
+        if (fields.length < 3 || fields[2].isBlank()) {
+            throw new PavanmaxxerException("Saved task data is corrupted.");
+        }
+
+        boolean isDone;
+        if (fields[1].equals("1")) {
+            isDone = true;
+        } else if (fields[1].equals("0")) {
+            isDone = false;
+        } else {
+            throw new PavanmaxxerException("Saved task data is corrupted.");
+        }
+
+        Task task;
+        switch (fields[0]) {
+        case "T":
+            if (fields.length != 3) {
+                throw new PavanmaxxerException("Saved task data is corrupted.");
+            }
+            task = new Todo(fields[2]);
+            break;
+        case "D":
+            if (fields.length != 4) {
+                throw new PavanmaxxerException("Saved task data is corrupted.");
+            }
+            task = new Deadline(fields[2], fields[3]);
+            break;
+        case "E":
+            if (fields.length != 5) {
+                throw new PavanmaxxerException("Saved task data is corrupted.");
+            }
+            task = new Event(fields[2], fields[3], fields[4]);
+            break;
+        default:
+            throw new PavanmaxxerException("Saved task data is corrupted.");
+        }
+
+        if (isDone) {
+            task.markAsDone();
+        }
+        return task;
     }
 
     /**
