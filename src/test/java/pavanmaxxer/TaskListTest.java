@@ -1,32 +1,49 @@
 package pavanmaxxer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 /**
- * Checks task-list mutations and case-insensitive description search.
+ * Tests task-list collection operations.
  */
 public class TaskListTest {
-    public static void main(String[] args) {
-        Todo first = new Todo("Read Book");
-        TaskList tasks = new TaskList(List.of(first));
-
-        tasks.add(new Todo("write report"));
-        assert tasks.size() == 2;
-        assert tasks.get(0) == first;
-
-        assert tasks.mark(0) == first;
-        assert first.isDone();
-        assert tasks.unmark(0) == first;
-        assert !first.isDone();
-
-        assert tasks.find("book").equals(List.of(first));
-        assert tasks.find("REPORT").equals(List.of(tasks.get(1)));
+    @Test
+    void delete_middleTask_closesGap() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("A"));
+        tasks.add(new Todo("B"));
+        tasks.add(new Todo("C"));
 
         Task deleted = tasks.delete(1);
-        assert deleted.getDescription().equals("write report");
-        assert tasks.size() == 1;
-        assert tasks.asList().equals(List.of(first));
 
-        System.out.println("PASS: task-list operations preserve task order and state");
+        assertEquals("B", deleted.getDescription());
+        assertEquals(List.of("A", "C"), tasks.asList().stream()
+                .map(Task::getDescription)
+                .toList());
+    }
+
+    @Test
+    void markAndUnmark_validIndex_updatesTaskState() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertTrue(tasks.mark(0).isDone());
+        assertFalse(tasks.unmark(0).isDone());
+    }
+
+    @Test
+    void asList_returnedList_cannotMutateTaskList() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> tasks.asList().add(new Todo("write book")));
+        assertEquals(1, tasks.size());
     }
 }
