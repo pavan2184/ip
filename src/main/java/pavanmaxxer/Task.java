@@ -4,13 +4,15 @@ package pavanmaxxer;
  * Represents a task and whether it has been completed.
  */
 public class Task {
+    /** Description supplied by the user. */
     protected String description;
+    /** Whether the task has been completed. */
     protected boolean isDone;
 
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description description of the task
+     * @param description Description of the task.
      */
     public Task(String description) {
         this.description = description;
@@ -20,7 +22,7 @@ public class Task {
     /**
      * Returns the task description.
      *
-     * @return task description
+     * @return Task description.
      */
     public String getDescription() {
         return description;
@@ -29,7 +31,7 @@ public class Task {
     /**
      * Returns whether the task is completed.
      *
-     * @return true if the task is completed
+     * @return {@code true} if the task is completed.
      */
     public boolean isDone() {
         return isDone;
@@ -38,7 +40,7 @@ public class Task {
     /**
      * Returns the icon used to display the task's completion status.
      *
-     * @return {@code X} when done, or a blank space otherwise
+     * @return {@code X} when done, or a blank space otherwise.
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";

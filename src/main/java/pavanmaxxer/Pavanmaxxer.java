@@ -13,7 +13,7 @@ public class Pavanmaxxer {
     /**
      * Creates Pavanmaxxer using the supplied data-file location.
      *
-     * @param filePath relative or absolute task data path
+     * @param filePath Relative or absolute task data path.
      */
     public Pavanmaxxer(Path filePath) {
         ui = new Ui();
@@ -82,6 +82,11 @@ public class Pavanmaxxer {
         ui.showGoodbye();
     }
 
+    /**
+     * Launches Pavanmaxxer using its default relative data path.
+     *
+     * @param args Command-line arguments, which are not used.
+     */
     public static void main(String[] args) {
         new Pavanmaxxer(Path.of("data", "pavanmaxxer.txt")).run();
     }
