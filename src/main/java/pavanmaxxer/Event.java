@@ -4,15 +4,17 @@ package pavanmaxxer;
  * Represents a task occurring between a start and end time.
  */
 public class Event extends Task {
+    /** Start-time text supplied by the user. */
     protected String from;
+    /** End-time text supplied by the user. */
     protected String to;
 
     /**
      * Creates an incomplete event task.
      *
-     * @param description description of the task
-     * @param from start-time text supplied by the user
-     * @param to end-time text supplied by the user
+     * @param description Description of the task.
+     * @param from Start-time text supplied by the user.
+     * @param to End-time text supplied by the user.
      */
     public Event(String description, String from, String to) {
         super(description);
@@ -23,7 +25,7 @@ public class Event extends Task {
     /**
      * Returns the event start text.
      *
-     * @return event start text
+     * @return Event start text.
      */
     public String getFrom() {
         return from;
@@ -32,7 +34,7 @@ public class Event extends Task {
     /**
      * Returns the event end text.
      *
-     * @return event end text
+     * @return Event end text.
      */
     public String getTo() {
         return to;

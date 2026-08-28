@@ -13,6 +13,11 @@ import java.util.ArrayList;
 public final class Storage {
     private final Path filePath;
 
+    /**
+     * Creates storage that reads and writes the supplied file.
+     *
+     * @param filePath Relative or absolute task data path.
+     */
     public Storage(Path filePath) {
         this.filePath = filePath;
     }
@@ -20,8 +25,8 @@ public final class Storage {
     /**
      * Loads saved tasks, creating an empty data file on first use.
      *
-     * @return loaded tasks in their saved order
-     * @throws PavanmaxxerException if the file cannot be read or is corrupt
+     * @return Loaded tasks in their saved order.
+     * @throws PavanmaxxerException If the file cannot be read or is corrupt.
      */
     public ArrayList<Task> load() throws PavanmaxxerException {
         try {
@@ -49,8 +54,8 @@ public final class Storage {
     /**
      * Saves the current task list, replacing the previous stored snapshot.
      *
-     * @param tasks task list to save
-     * @throws PavanmaxxerException if the file cannot be written
+     * @param tasks Task list to save.
+     * @throws PavanmaxxerException If the file cannot be written.
      */
     public void save(TaskList tasks) throws PavanmaxxerException {
         try {

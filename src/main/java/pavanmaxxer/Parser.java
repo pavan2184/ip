@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 /**
- * Converts raw user input into commands and validated command arguments.
+ * Parses supported Pavanmaxxer commands and their arguments.
  */
 public final class Parser {
     private Parser() {
@@ -13,8 +13,8 @@ public final class Parser {
     /**
      * Identifies the command represented by the input.
      *
-     * @param input raw user input
-     * @return matching command, or {@link Command#UNKNOWN}
+     * @param input Raw user input.
+     * @return Matching command, or {@link Command#UNKNOWN}.
      */
     public static Command parseCommand(String input) {
         return Command.from(input);
@@ -23,10 +23,10 @@ public final class Parser {
     /**
      * Creates a task from a task-creation command.
      *
-     * @param input raw user input
-     * @param command recognized task command
-     * @return parsed task
-     * @throws PavanmaxxerException if required arguments are invalid or missing
+     * @param input Full command entered by the user.
+     * @param command Classified task-creation command.
+     * @return Parsed task.
+     * @throws PavanmaxxerException If a required field or valid date is missing.
      */
     public static Task parseTask(String input, Command command)
             throws PavanmaxxerException {
@@ -103,11 +103,11 @@ public final class Parser {
     /**
      * Converts a one-based task number into a valid list index.
      *
-     * @param input raw user input
-     * @param commandWord command whose argument is being parsed
-     * @param taskListSize current number of tasks
-     * @return zero-based task index
-     * @throws PavanmaxxerException if the index is missing or invalid
+     * @param input Full command entered by the user.
+     * @param commandWord Command whose argument is being parsed.
+     * @param taskListSize Current number of tasks.
+     * @return Zero-based task index.
+     * @throws PavanmaxxerException If the index is missing or invalid.
      */
     public static int parseTaskIndex(String input, String commandWord,
             int taskListSize) throws PavanmaxxerException {
@@ -133,9 +133,9 @@ public final class Parser {
     /**
      * Extracts the required keyword from a find command.
      *
-     * @param input raw user input
-     * @return non-empty search keyword
-     * @throws PavanmaxxerException if the keyword is missing
+     * @param input Full command entered by the user.
+     * @return Non-empty search keyword.
+     * @throws PavanmaxxerException If the keyword is missing.
      */
     public static String parseFindKeyword(String input)
             throws PavanmaxxerException {
