@@ -95,26 +95,26 @@ public final class Storage {
         Task task;
         try {
             switch (fields[0]) {
-            case "T":
-                if (fields.length != 3) {
+                case "T":
+                    if (fields.length != 3) {
+                        throw new PavanmaxxerException("Saved task data is corrupted.");
+                    }
+                    task = new Todo(fields[2]);
+                    break;
+                case "D":
+                    if (fields.length != 4) {
+                        throw new PavanmaxxerException("Saved task data is corrupted.");
+                    }
+                    task = new Deadline(fields[2], LocalDate.parse(fields[3]));
+                    break;
+                case "E":
+                    if (fields.length != 5) {
+                        throw new PavanmaxxerException("Saved task data is corrupted.");
+                    }
+                    task = new Event(fields[2], fields[3], fields[4]);
+                    break;
+                default:
                     throw new PavanmaxxerException("Saved task data is corrupted.");
-                }
-                task = new Todo(fields[2]);
-                break;
-            case "D":
-                if (fields.length != 4) {
-                    throw new PavanmaxxerException("Saved task data is corrupted.");
-                }
-                task = new Deadline(fields[2], LocalDate.parse(fields[3]));
-                break;
-            case "E":
-                if (fields.length != 5) {
-                    throw new PavanmaxxerException("Saved task data is corrupted.");
-                }
-                task = new Event(fields[2], fields[3], fields[4]);
-                break;
-            default:
-                throw new PavanmaxxerException("Saved task data is corrupted.");
             }
         } catch (DateTimeParseException exception) {
             throw new PavanmaxxerException("Saved task data is corrupted.");

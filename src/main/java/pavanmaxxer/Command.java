@@ -24,11 +24,11 @@ public enum Command {
     UNKNOWN("", false);
 
     private final String keyword;
-    private final boolean acceptsArguments;
+    private final boolean hasArguments;
 
-    Command(String keyword, boolean acceptsArguments) {
+    Command(String keyword, boolean hasArguments) {
         this.keyword = keyword;
-        this.acceptsArguments = acceptsArguments;
+        this.hasArguments = hasArguments;
     }
 
     /**
@@ -43,7 +43,7 @@ public enum Command {
                 continue;
             }
             if (input.equals(command.keyword)
-                    || command.acceptsArguments && input.startsWith(command.keyword + " ")) {
+                    || command.hasArguments && input.startsWith(command.keyword + " ")) {
                 return command;
             }
         }

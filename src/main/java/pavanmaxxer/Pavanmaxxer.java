@@ -39,41 +39,41 @@ public class Pavanmaxxer {
             Command command = Parser.parseCommand(input);
             try {
                 switch (command) {
-                case BYE:
-                    isRunning = false;
-                    break;
-                case LIST:
-                    ui.showTasks(tasks.asList());
-                    break;
-                case MARK:
-                    int markIndex = Parser.parseTaskIndex(input, "mark", tasks.size());
-                    Task markedTask = tasks.mark(markIndex);
-                    storage.save(tasks);
-                    ui.showMarkedTask(markedTask, true);
-                    break;
-                case UNMARK:
-                    int unmarkIndex = Parser.parseTaskIndex(input, "unmark", tasks.size());
-                    Task unmarkedTask = tasks.unmark(unmarkIndex);
-                    storage.save(tasks);
-                    ui.showMarkedTask(unmarkedTask, false);
-                    break;
-                case DELETE:
-                    int deleteIndex = Parser.parseTaskIndex(input, "delete", tasks.size());
-                    Task deletedTask = tasks.delete(deleteIndex);
-                    storage.save(tasks);
-                    ui.showDeletedTask(deletedTask, tasks.size());
-                    break;
-                case TODO:
-                case DEADLINE:
-                case EVENT:
-                    Task task = Parser.parseTask(input, command);
-                    tasks.add(task);
-                    storage.save(tasks);
-                    ui.showAddedTask(task, tasks.size());
-                    break;
-                case UNKNOWN:
-                    throw new PavanmaxxerException(
-                            "I'm sorry, but I don't know what that means :-(");
+                    case BYE:
+                        isRunning = false;
+                        break;
+                    case LIST:
+                        ui.showTasks(tasks.asList());
+                        break;
+                    case MARK:
+                        int markIndex = Parser.parseTaskIndex(input, "mark", tasks.size());
+                        Task markedTask = tasks.mark(markIndex);
+                        storage.save(tasks);
+                        ui.showMarkedTask(markedTask, true);
+                        break;
+                    case UNMARK:
+                        int unmarkIndex = Parser.parseTaskIndex(input, "unmark", tasks.size());
+                        Task unmarkedTask = tasks.unmark(unmarkIndex);
+                        storage.save(tasks);
+                        ui.showMarkedTask(unmarkedTask, false);
+                        break;
+                    case DELETE:
+                        int deleteIndex = Parser.parseTaskIndex(input, "delete", tasks.size());
+                        Task deletedTask = tasks.delete(deleteIndex);
+                        storage.save(tasks);
+                        ui.showDeletedTask(deletedTask, tasks.size());
+                        break;
+                    case TODO:
+                    case DEADLINE:
+                    case EVENT:
+                        Task task = Parser.parseTask(input, command);
+                        tasks.add(task);
+                        storage.save(tasks);
+                        ui.showAddedTask(task, tasks.size());
+                        break;
+                    case UNKNOWN:
+                        throw new PavanmaxxerException(
+                                "I'm sorry, but I don't know what that means :-(");
                 }
             } catch (PavanmaxxerException exception) {
                 ui.showError(exception.getMessage());
