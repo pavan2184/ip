@@ -59,4 +59,15 @@ public class ParserTest {
         assertThrows(PavanmaxxerException.class,
                 () -> Parser.parseTaskIndex("delete first", "delete", 2));
     }
+
+    @Test
+    void parseCommand_findWithKeyword_returnsFind() {
+        assertEquals(Command.FIND, Parser.parseCommand("find book"));
+    }
+
+    @Test
+    void parseFindKeyword_emptyKeyword_throwsException() {
+        assertThrows(PavanmaxxerException.class,
+                () -> Parser.parseFindKeyword("find"));
+    }
 }

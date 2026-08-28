@@ -71,6 +71,10 @@ public class Pavanmaxxer {
                     storage.save(tasks);
                     ui.showAddedTask(task, tasks.size());
                     break;
+                case FIND:
+                    String keyword = Parser.parseFindKeyword(input);
+                    ui.showMatchingTasks(tasks.find(keyword));
+                    break;
                 case UNKNOWN:
                     throw new PavanmaxxerException(
                             "I'm sorry, but I don't know what that means :-(");

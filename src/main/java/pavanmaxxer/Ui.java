@@ -57,7 +57,7 @@ public class Ui {
         System.out.println("Now you have " + taskCount + " tasks in the list.");
     }
 
-    public void showFoundTasks(List<Task> tasks) {
+    public void showMatchingTasks(List<Task> tasks) {
         System.out.println("Here are the matching tasks in your list:");
         showTasks(tasks);
     }
