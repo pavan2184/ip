@@ -10,14 +10,14 @@ public class DeadlineDateTest {
         assert deadline.toString()
                 .equals("[D][ ] return book (by: Aug 31 2026)");
 
-        Task parsed = Pavanmaxxer.parseTask(
+        Task parsed = Parser.parseTask(
                 "deadline return book /by 2026-08-31", Command.DEADLINE);
         assert parsed.toString()
                 .equals("[D][ ] return book (by: Aug 31 2026)");
 
         boolean didThrow = false;
         try {
-            Pavanmaxxer.parseTask(
+            Parser.parseTask(
                     "deadline return book /by 2026-02-30", Command.DEADLINE);
         } catch (PavanmaxxerException exception) {
             didThrow = true;

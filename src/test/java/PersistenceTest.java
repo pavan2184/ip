@@ -25,8 +25,9 @@ public class PersistenceTest {
         tasks.add(new Deadline("return book", LocalDate.parse("2026-08-31")));
         tasks.add(new Event("project meeting", "2pm", "4pm"));
 
-        Pavanmaxxer.saveTasks(tasks, dataFile);
-        ArrayList<Task> loaded = Pavanmaxxer.loadTasks(dataFile);
+        Storage storage = new Storage(dataFile);
+        storage.save(new TaskList(tasks));
+        ArrayList<Task> loaded = storage.load();
 
         assert Files.exists(dataFile);
         assert loaded.size() == 3;
@@ -41,7 +42,7 @@ public class PersistenceTest {
         Path testRoot = Files.createTempDirectory("pavanmaxxer-level7-empty-");
         Path dataFile = testRoot.resolve("data").resolve("pavanmaxxer.txt");
 
-        ArrayList<Task> loaded = Pavanmaxxer.loadTasks(dataFile);
+        ArrayList<Task> loaded = new Storage(dataFile).load();
 
         assert loaded.isEmpty();
         assert Files.exists(dataFile);
@@ -54,7 +55,7 @@ public class PersistenceTest {
 
         boolean didThrow = false;
         try {
-            Pavanmaxxer.loadTasks(dataFile);
+            new Storage(dataFile).load();
         } catch (PavanmaxxerException exception) {
             didThrow = true;
         }
