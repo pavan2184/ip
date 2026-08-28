@@ -1,3 +1,5 @@
+package pavanmaxxer;
+
 /**
  * Represents the finite set of commands understood by Pavanmaxxer.
  */

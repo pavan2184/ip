@@ -1,3 +1,5 @@
+package pavanmaxxer;
+
 /**
  * Checks how raw user input is classified into supported commands.
  */

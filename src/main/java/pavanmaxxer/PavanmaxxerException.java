@@ -1,3 +1,5 @@
+package pavanmaxxer;
+
 /**
  * Represents an input error that Pavanmaxxer can explain to the user.
  */
