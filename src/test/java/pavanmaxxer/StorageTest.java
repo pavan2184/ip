@@ -50,7 +50,7 @@ public class StorageTest {
         Path dataFile = testDirectory.resolve("pavanmaxxer.txt");
         Files.writeString(dataFile, "T | 0 | \n");
 
-        assertThrows(PavanmaxxerException.class,
-                () -> new Storage(dataFile).load());
+        assertThrows(PavanmaxxerException.class, () ->
+                new Storage(dataFile).load());
     }
 }

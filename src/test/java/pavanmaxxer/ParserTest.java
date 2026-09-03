@@ -19,8 +19,7 @@ public class ParserTest {
 
     @Test
     void parseTask_impossibleDate_throwsException() {
-        assertThrows(PavanmaxxerException.class,
-                () -> Parser.parseTask(
+        assertThrows(PavanmaxxerException.class, () -> Parser.parseTask(
                         "deadline return book /by 2026-02-30",
                         Command.DEADLINE));
     }
@@ -32,20 +31,19 @@ public class ParserTest {
 
     @Test
     void parseTaskIndex_outOfRange_throwsException() {
-        assertThrows(PavanmaxxerException.class,
-                () -> Parser.parseTaskIndex("mark 3", "mark", 2));
+        assertThrows(PavanmaxxerException.class, () ->
+                Parser.parseTaskIndex("mark 3", "mark", 2));
     }
 
     @Test
     void parseTask_emptyTodo_throwsException() {
-        assertThrows(PavanmaxxerException.class,
-                () -> Parser.parseTask("todo", Command.TODO));
+        assertThrows(PavanmaxxerException.class, () ->
+                Parser.parseTask("todo", Command.TODO));
     }
 
     @Test
     void parseTask_eventWithoutTo_throwsException() {
-        assertThrows(PavanmaxxerException.class,
-                () -> Parser.parseTask(
+        assertThrows(PavanmaxxerException.class, () -> Parser.parseTask(
                         "event meeting /from 2pm", Command.EVENT));
     }
 
@@ -56,8 +54,8 @@ public class ParserTest {
 
     @Test
     void parseTaskIndex_nonInteger_throwsException() {
-        assertThrows(PavanmaxxerException.class,
-                () -> Parser.parseTaskIndex("delete first", "delete", 2));
+        assertThrows(PavanmaxxerException.class, () ->
+                Parser.parseTaskIndex("delete first", "delete", 2));
     }
 
     @Test
@@ -67,7 +65,7 @@ public class ParserTest {
 
     @Test
     void parseFindKeyword_emptyKeyword_throwsException() {
-        assertThrows(PavanmaxxerException.class,
-                () -> Parser.parseFindKeyword("find"));
+        assertThrows(PavanmaxxerException.class, () ->
+                Parser.parseFindKeyword("find"));
     }
 }
