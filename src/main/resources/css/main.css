@@ -1,0 +1,22 @@
+.root {
+    -fx-background-color: #f3f6fb;
+}
+
+.text-field {
+    -fx-font: 15px "Arial";
+}
+
+.button {
+    -fx-background-color: #3f6ad8;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button:hover {
+    -fx-background-color: #3158bd;
+}
+
+.scroll-pane,
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}

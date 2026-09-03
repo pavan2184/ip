@@ -50,6 +50,15 @@ public class Ui {
     }
 
     /**
+     * Shows a response produced by the application core.
+     *
+     * @param response User-facing response text.
+     */
+    public void showResponse(String response) {
+        System.out.println(response);
+    }
+
+    /**
      * Shows tasks as a one-based numbered list.
      *
      * @param tasks Tasks to show.
