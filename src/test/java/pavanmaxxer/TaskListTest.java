@@ -43,8 +43,8 @@ public class TaskListTest {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
 
-        assertThrows(UnsupportedOperationException.class,
-                () -> tasks.asList().add(new Todo("write book")));
+        assertThrows(UnsupportedOperationException.class, () ->
+                tasks.asList().add(new Todo("write book")));
         assertEquals(1, tasks.size());
     }
 

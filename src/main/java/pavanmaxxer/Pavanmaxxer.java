@@ -76,6 +76,7 @@ public class Pavanmaxxer {
                         ui.showMatchingTasks(tasks.find(keyword));
                         break;
                     case UNKNOWN:
+                    default:
                         throw new PavanmaxxerException(
                                 "I'm sorry, but I don't know what that means :-(");
                 }
