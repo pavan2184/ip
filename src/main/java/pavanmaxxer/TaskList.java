@@ -1,6 +1,7 @@
 package pavanmaxxer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -89,18 +90,23 @@ public class TaskList {
     }
 
     /**
-     * Returns tasks whose descriptions contain the keyword, ignoring case.
+     * Returns tasks whose descriptions contain every keyword, ignoring case.
      *
-     * @param keyword Keyword to match against task descriptions.
+     * @param keywords Keywords to match against task descriptions.
      * @return Matching tasks in their original order.
      */
-    public List<Task> find(String keyword) {
-        String normalizedKeyword = keyword.toLowerCase(Locale.ENGLISH);
+    public List<Task> find(String... keywords) {
         return tasks.stream()
-                .filter(task -> task.getDescription()
-                        .toLowerCase(Locale.ENGLISH)
-                        .contains(normalizedKeyword))
+                .filter(task -> containsEveryKeyword(task, keywords))
                 .toList();
+    }
+
+    private static boolean containsEveryKeyword(Task task, String... keywords) {
+        String normalizedDescription = task.getDescription()
+                .toLowerCase(Locale.ENGLISH);
+        return Arrays.stream(keywords)
+                .map(keyword -> keyword.toLowerCase(Locale.ENGLISH))
+                .allMatch(normalizedDescription::contains);
     }
 
     /**

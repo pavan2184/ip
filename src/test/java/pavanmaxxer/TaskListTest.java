@@ -61,4 +61,17 @@ public class TaskListTest {
                         .map(Task::getDescription)
                         .toList());
     }
+
+    @Test
+    void find_multipleKeywords_returnsTasksContainingEveryKeyword() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Todo("read journal"));
+        tasks.add(new Todo("buy book"));
+
+        assertEquals(List.of("read book"),
+                tasks.find("READ", "book").stream()
+                        .map(Task::getDescription)
+                        .toList());
+    }
 }
