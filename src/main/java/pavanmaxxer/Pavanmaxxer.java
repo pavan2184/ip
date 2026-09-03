@@ -88,7 +88,7 @@ public class Pavanmaxxer {
     private String findTasks(String input) throws PavanmaxxerException {
         String keyword = Parser.parseFindKeyword(input);
         return "Here are the matching tasks in your list:\n"
-                + formatTasks(tasks.find(keyword));
+                + formatTasks(tasks.find(keyword.split("\\s+")));
     }
 
     private static String formatTasks(List<Task> tasks) {
