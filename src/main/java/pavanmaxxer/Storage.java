@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Loads and saves tasks using the application's text storage format.
@@ -66,10 +67,9 @@ public final class Storage {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            ArrayList<String> lines = new ArrayList<>();
-            for (Task task : tasks.asList()) {
-                lines.add(encodeTask(task));
-            }
+            List<String> lines = tasks.asList().stream()
+                    .map(this::encodeTask)
+                    .toList();
             Files.write(filePath, lines);
         } catch (IOException exception) {
             throw new PavanmaxxerException("Unable to save tasks.");

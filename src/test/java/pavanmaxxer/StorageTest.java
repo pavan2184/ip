@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -17,6 +18,24 @@ import org.junit.jupiter.api.io.TempDir;
 public class StorageTest {
     @TempDir
     Path testDirectory;
+
+    @Test
+    void save_multipleTasks_writesLinesInOriginalOrder() throws Exception {
+        Path dataFile = testDirectory.resolve("pavanmaxxer.txt");
+        Storage storage = new Storage(dataFile);
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Deadline(
+                "return book", LocalDate.parse("2026-08-31")));
+        tasks.mark(0);
+
+        storage.save(tasks);
+
+        assertEquals(List.of(
+                "T | 1 | read book",
+                "D | 0 | return book | 2026-08-31"),
+                Files.readAllLines(dataFile));
+    }
 
     @Test
     void saveAndLoad_multipleTaskTypes_preservesState() throws Exception {
