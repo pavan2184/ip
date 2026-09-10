@@ -43,6 +43,7 @@ public class TaskList {
      * @return Task at the index.
      */
     public Task get(int index) {
+        assert isValidIndex(index) : "task index must refer to an existing task";
         return tasks.get(index);
     }
 
@@ -52,6 +53,7 @@ public class TaskList {
      * @param task Task to add.
      */
     public void add(Task task) {
+        assert task != null : "task to add must not be null";
         tasks.add(task);
     }
 
@@ -62,6 +64,7 @@ public class TaskList {
      * @return Deleted task.
      */
     public Task delete(int index) {
+        assert isValidIndex(index) : "task index must refer to an existing task";
         return tasks.remove(index);
     }
 
@@ -72,6 +75,7 @@ public class TaskList {
      * @return Updated task.
      */
     public Task mark(int index) {
+        assert isValidIndex(index) : "task index must refer to an existing task";
         Task task = tasks.get(index);
         task.markAsDone();
         return task;
@@ -84,9 +88,14 @@ public class TaskList {
      * @return Updated task.
      */
     public Task unmark(int index) {
+        assert isValidIndex(index) : "task index must refer to an existing task";
         Task task = tasks.get(index);
         task.markAsNotDone();
         return task;
+    }
+
+    private boolean isValidIndex(int index) {
+        return index >= 0 && index < tasks.size();
     }
 
     /**
