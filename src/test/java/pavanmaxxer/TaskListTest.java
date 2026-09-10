@@ -15,6 +15,21 @@ import org.junit.jupiter.api.Test;
  */
 public class TaskListTest {
     @Test
+    void add_nullTask_throwsAssertionError() {
+        TaskList tasks = new TaskList();
+
+        assertThrows(AssertionError.class, () -> tasks.add(null));
+    }
+
+    @Test
+    void mark_indexAtSize_throwsAssertionError() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertThrows(AssertionError.class, () -> tasks.mark(tasks.size()));
+    }
+
+    @Test
     void delete_middleTask_closesGap() {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("A"));
