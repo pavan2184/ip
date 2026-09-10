@@ -72,4 +72,22 @@ public class StorageTest {
         assertThrows(PavanmaxxerException.class, () ->
                 new Storage(dataFile).load());
     }
+
+    @Test
+    void load_unsupportedTaskType_throwsApplicationException() throws Exception {
+        Path dataFile = testDirectory.resolve("pavanmaxxer.txt");
+        Files.writeString(dataFile, "X | 0 | read book\n");
+
+        assertThrows(PavanmaxxerException.class, () ->
+                new Storage(dataFile).load());
+    }
+
+    @Test
+    void load_invalidDeadlineDate_throwsApplicationException() throws Exception {
+        Path dataFile = testDirectory.resolve("pavanmaxxer.txt");
+        Files.writeString(dataFile, "D | 0 | return book | not-a-date\n");
+
+        assertThrows(PavanmaxxerException.class, () ->
+                new Storage(dataFile).load());
+    }
 }

@@ -12,6 +12,9 @@ import java.util.List;
  * Loads and saves tasks using the application's text storage format.
  */
 public final class Storage {
+    private static final String CORRUPTED_DATA_MESSAGE =
+            "Saved task data is corrupted.";
+
     private final Path filePath;
 
     /**
@@ -87,42 +90,55 @@ public final class Storage {
     }
 
     private Task decodeTask(String line) throws PavanmaxxerException {
+        String[] fields = parseFields(line);
+        boolean isDone = parseState(fields[1]);
+        Task task = createTask(fields);
+        restoreState(task, isDone);
+        return task;
+    }
+
+    private String[] parseFields(String line) throws PavanmaxxerException {
         String[] fields = line.split(" \\| ", -1);
         if (fields.length < 3 || fields[2].isBlank()) {
-            throw new PavanmaxxerException("Saved task data is corrupted.");
+            throw new PavanmaxxerException(CORRUPTED_DATA_MESSAGE);
         }
-        boolean isDone = parseState(fields[1]);
-        Task task;
+        return fields;
+    }
+
+    private Task createTask(String[] fields) throws PavanmaxxerException {
         try {
-            switch (fields[0]) {
-                case "T":
-                    if (fields.length != 3) {
-                        throw new PavanmaxxerException("Saved task data is corrupted.");
-                    }
-                    task = new Todo(fields[2]);
-                    break;
-                case "D":
-                    if (fields.length != 4) {
-                        throw new PavanmaxxerException("Saved task data is corrupted.");
-                    }
-                    task = new Deadline(fields[2], LocalDate.parse(fields[3]));
-                    break;
-                case "E":
-                    if (fields.length != 5) {
-                        throw new PavanmaxxerException("Saved task data is corrupted.");
-                    }
-                    task = new Event(fields[2], fields[3], fields[4]);
-                    break;
-                default:
-                    throw new PavanmaxxerException("Saved task data is corrupted.");
-            }
+            return switch (fields[0]) {
+                case "T" -> {
+                    validateFieldCount(fields, 3);
+                    yield new Todo(fields[2]);
+                }
+                case "D" -> {
+                    validateFieldCount(fields, 4);
+                    yield new Deadline(fields[2], LocalDate.parse(fields[3]));
+                }
+                case "E" -> {
+                    validateFieldCount(fields, 5);
+                    yield new Event(fields[2], fields[3], fields[4]);
+                }
+                default ->
+                    throw new PavanmaxxerException(CORRUPTED_DATA_MESSAGE);
+            };
         } catch (DateTimeParseException exception) {
-            throw new PavanmaxxerException("Saved task data is corrupted.");
+            throw new PavanmaxxerException(CORRUPTED_DATA_MESSAGE);
         }
+    }
+
+    private void validateFieldCount(String[] fields, int expectedCount)
+            throws PavanmaxxerException {
+        if (fields.length != expectedCount) {
+            throw new PavanmaxxerException(CORRUPTED_DATA_MESSAGE);
+        }
+    }
+
+    private void restoreState(Task task, boolean isDone) {
         if (isDone) {
             task.markAsDone();
         }
-        return task;
     }
 
     private boolean parseState(String state) throws PavanmaxxerException {
@@ -132,6 +148,6 @@ public final class Storage {
         if (state.equals("0")) {
             return false;
         }
-        throw new PavanmaxxerException("Saved task data is corrupted.");
+        throw new PavanmaxxerException(CORRUPTED_DATA_MESSAGE);
     }
 }
