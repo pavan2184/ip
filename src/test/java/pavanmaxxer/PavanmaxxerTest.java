@@ -12,6 +12,22 @@ class PavanmaxxerTest {
     Path temporaryDirectory;
 
     @Test
+    void getResponse_addDuplicate_warnsButAddsAndPersistsTask() {
+        Path dataFile = temporaryDirectory.resolve("tasks.txt");
+        Pavanmaxxer pavanmaxxer = new Pavanmaxxer(dataFile);
+        pavanmaxxer.getResponse("todo read book");
+
+        assertEquals("This task already exists in your list, but I've added it again:\n"
+                        + "  [T][ ] READ BOOK\n"
+                        + "Now you have 2 tasks in the list.",
+                pavanmaxxer.getResponse("todo READ BOOK"));
+
+        Pavanmaxxer reloadedPavanmaxxer = new Pavanmaxxer(dataFile);
+        assertEquals("1.[T][ ] read book\n2.[T][ ] READ BOOK",
+                reloadedPavanmaxxer.getResponse("list"));
+    }
+
+    @Test
     void getResponse_addThenList_returnsGuiReadyMessages() {
         Pavanmaxxer pavanmaxxer = new Pavanmaxxer(
                 temporaryDirectory.resolve("tasks.txt"));

@@ -58,6 +58,17 @@ public class TaskList {
     }
 
     /**
+     * Returns whether a task with the same user-visible details is stored.
+     *
+     * @param candidate Task whose details should be checked.
+     * @return {@code true} if a task with matching details exists.
+     */
+    public boolean containsSameDetails(Task candidate) {
+        assert candidate != null : "candidate task must not be null";
+        return tasks.stream().anyMatch(candidate::hasSameDetails);
+    }
+
+    /**
      * Deletes and returns the task at the specified index.
      *
      * @param index Zero-based task index.

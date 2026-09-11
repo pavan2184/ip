@@ -41,6 +41,16 @@ public class Event extends Task {
     }
 
     @Override
+    public boolean hasSameDetails(Task other) {
+        if (!(other instanceof Event event)) {
+            return false;
+        }
+        return super.hasSameDetails(other)
+                && from.equalsIgnoreCase(event.from)
+                && to.equalsIgnoreCase(event.to);
+    }
+
+    @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
     }

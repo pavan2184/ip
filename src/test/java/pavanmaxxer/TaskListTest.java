@@ -15,6 +15,51 @@ import org.junit.jupiter.api.Test;
  */
 public class TaskListTest {
     @Test
+    void containsSameDetails_todoWithDifferentCase_returnsTrue() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertTrue(tasks.containsSameDetails(new Todo("READ BOOK")));
+    }
+
+    @Test
+    void containsSameDetails_sameDescriptionDifferentType_returnsFalse() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("return book"));
+
+        assertFalse(tasks.containsSameDetails(new Deadline(
+                "return book", LocalDate.parse("2026-09-20"))));
+    }
+
+    @Test
+    void containsSameDetails_deadlineWithDifferentDate_returnsFalse() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Deadline(
+                "return book", LocalDate.parse("2026-09-20")));
+
+        assertFalse(tasks.containsSameDetails(new Deadline(
+                "RETURN BOOK", LocalDate.parse("2026-09-21"))));
+    }
+
+    @Test
+    void containsSameDetails_eventWithDifferentCase_returnsTrue() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Event("meeting", "2PM", "4PM"));
+
+        assertTrue(tasks.containsSameDetails(
+                new Event("MEETING", "2pm", "4pm")));
+    }
+
+    @Test
+    void containsSameDetails_completedTaskAndIncompleteCandidate_returnsTrue() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.mark(0);
+
+        assertTrue(tasks.containsSameDetails(new Todo("read book")));
+    }
+
+    @Test
     void add_nullTask_throwsAssertionError() {
         TaskList tasks = new TaskList();
 

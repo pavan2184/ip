@@ -38,6 +38,19 @@ public class Task {
     }
 
     /**
+     * Returns whether this task has the same user-visible details as another.
+     * Completion status is deliberately ignored.
+     *
+     * @param other Task to compare against.
+     * @return {@code true} if both tasks have the same type and details.
+     */
+    public boolean hasSameDetails(Task other) {
+        return other != null
+                && getClass().equals(other.getClass())
+                && description.equalsIgnoreCase(other.description);
+    }
+
+    /**
      * Returns the icon used to display the task's completion status.
      *
      * @return {@code X} when done, or a blank space otherwise.

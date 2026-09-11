@@ -79,9 +79,13 @@ public class Pavanmaxxer {
     private String addTask(String input, Command command)
             throws PavanmaxxerException {
         Task task = Parser.parseTask(input, command);
+        boolean isDuplicate = tasks.containsSameDetails(task);
         tasks.add(task);
         storage.save(tasks);
-        return "Got it. I've added this task:\n  " + task
+        String introduction = isDuplicate
+                ? "This task already exists in your list, but I've added it again:"
+                : "Got it. I've added this task:";
+        return introduction + "\n  " + task
                 + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 
