@@ -68,4 +68,50 @@ public class ParserTest {
         assertThrows(PavanmaxxerException.class, () ->
                 Parser.parseFindKeyword("find"));
     }
+
+    @Test
+    void parseTask_descriptionContainingStorageDelimiter_throwsException() {
+        PavanmaxxerException exception =
+                assertThrows(PavanmaxxerException.class, () ->
+                        Parser.parseTask("todo read | write", Command.TODO));
+
+        assertEquals("Task details cannot contain the | character.",
+                exception.getMessage());
+    }
+
+    @Test
+    void parseTask_deadlineWithRepeatedByField_throwsException() {
+        PavanmaxxerException exception =
+                assertThrows(PavanmaxxerException.class, () ->
+                        Parser.parseTask(
+                                "deadline return book /by 2026-09-18 /by 2026-09-19",
+                                Command.DEADLINE));
+
+        assertEquals("A deadline must contain exactly one /by field.",
+                exception.getMessage());
+    }
+
+    @Test
+    void parseTask_eventWithRepeatedToField_throwsException() {
+        PavanmaxxerException exception =
+                assertThrows(PavanmaxxerException.class, () ->
+                        Parser.parseTask(
+                                "event class /from 2pm /to 4pm /to 5pm",
+                                Command.EVENT));
+
+        assertEquals("An event must contain exactly one /from and one /to field.",
+                exception.getMessage());
+    }
+
+    @Test
+    void parseTask_eventWithToBeforeFrom_throwsException() {
+        PavanmaxxerException exception =
+                assertThrows(PavanmaxxerException.class, () ->
+                        Parser.parseTask(
+                                "event class /to 4pm /from 2pm",
+                                Command.EVENT));
+
+        assertEquals("Use event DESCRIPTION /from START /to END.",
+                exception.getMessage());
+    }
 }
