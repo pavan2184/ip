@@ -3,6 +3,8 @@
     -fx-background-radius: 1em 1em 0 1em;
     -fx-border-color: #adc3ef;
     -fx-border-radius: 1em 1em 0 1em;
+    -fx-font-size: 14px;
+    -fx-text-fill: #18243a;
 }
 
 .reply-label {

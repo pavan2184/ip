@@ -90,4 +90,32 @@ public class StorageTest {
         assertThrows(PavanmaxxerException.class, () ->
                 new Storage(dataFile).load());
     }
+
+    @Test
+    void load_eventWithEmptyEnd_throwsApplicationException() throws Exception {
+        Path dataFile = testDirectory.resolve("pavanmaxxer.txt");
+        Files.writeString(dataFile, "E | 0 | class | 2pm | \n");
+
+        assertThrows(PavanmaxxerException.class, () ->
+                new Storage(dataFile).load());
+    }
+
+    @Test
+    void load_invalidCompletionState_throwsApplicationException()
+            throws Exception {
+        Path dataFile = testDirectory.resolve("pavanmaxxer.txt");
+        Files.writeString(dataFile, "T | yes | read book\n");
+
+        assertThrows(PavanmaxxerException.class, () ->
+                new Storage(dataFile).load());
+    }
+
+    @Test
+    void load_todoWithExtraField_throwsApplicationException() throws Exception {
+        Path dataFile = testDirectory.resolve("pavanmaxxer.txt");
+        Files.writeString(dataFile, "T | 0 | read | book\n");
+
+        assertThrows(PavanmaxxerException.class, () ->
+                new Storage(dataFile).load());
+    }
 }

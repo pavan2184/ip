@@ -118,6 +118,7 @@ public final class Storage {
                 }
                 case "E" -> {
                     validateFieldCount(fields, 5);
+                    validateNonBlank(fields[3], fields[4]);
                     yield new Event(fields[2], fields[3], fields[4]);
                 }
                 default ->
@@ -132,6 +133,15 @@ public final class Storage {
             throws PavanmaxxerException {
         if (fields.length != expectedCount) {
             throw new PavanmaxxerException(CORRUPTED_DATA_MESSAGE);
+        }
+    }
+
+    private void validateNonBlank(String... fields)
+            throws PavanmaxxerException {
+        for (String field : fields) {
+            if (field.isBlank()) {
+                throw new PavanmaxxerException(CORRUPTED_DATA_MESSAGE);
+            }
         }
     }
 

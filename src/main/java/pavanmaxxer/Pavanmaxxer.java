@@ -40,7 +40,7 @@ public class Pavanmaxxer {
         try {
             return switch (command) {
                 case BYE -> "Bye. Hope to see you again soon!";
-                case LIST -> formatTasks(tasks.asList());
+                case LIST -> listTasks();
                 case MARK -> updateMark(input, true);
                 case UNMARK -> updateMark(input, false);
                 case DELETE -> deleteTask(input);
@@ -73,7 +73,7 @@ public class Pavanmaxxer {
         Task task = tasks.delete(index);
         storage.save(tasks);
         return "Noted. I've removed this task:\n  " + task
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+                + "\n" + formatTaskCount(tasks.size());
     }
 
     private String addTask(String input, Command command)
@@ -86,13 +86,29 @@ public class Pavanmaxxer {
                 ? "This task already exists in your list, but I've added it again:"
                 : "Got it. I've added this task:";
         return introduction + "\n  " + task
-                + "\nNow you have " + tasks.size() + " tasks in the list.";
+                + "\n" + formatTaskCount(tasks.size());
     }
 
     private String findTasks(String input) throws PavanmaxxerException {
         String keyword = Parser.parseFindKeyword(input);
+        List<Task> matchingTasks = tasks.find(keyword.split("\\s+"));
+        if (matchingTasks.isEmpty()) {
+            return "No tasks matched \"" + keyword + "\".";
+        }
         return "Here are the matching tasks in your list:\n"
-                + formatTasks(tasks.find(keyword.split("\\s+")));
+                + formatTasks(matchingTasks);
+    }
+
+    private String listTasks() {
+        if (tasks.size() == 0) {
+            return "Your task list is empty.";
+        }
+        return formatTasks(tasks.asList());
+    }
+
+    private static String formatTaskCount(int taskCount) {
+        String noun = taskCount == 1 ? "task" : "tasks";
+        return "Now you have " + taskCount + " " + noun + " in the list.";
     }
 
     private static String formatTasks(List<Task> tasks) {
